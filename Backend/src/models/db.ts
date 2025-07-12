@@ -27,6 +27,7 @@ userId: Types.ObjectId;
 title: string;
 description: string;
 tags: string[];
+images: string[];
 acceptedAnswerId?: Types.ObjectId;
 createdAt: Date;
 updatedAt: Date;
@@ -37,6 +38,7 @@ userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 title: { type: String, required: true },
 description: { type: String, required: true },
 tags: [{ type: String }],
+images:[{type:String}],
 acceptedAnswerId: { type: Schema.Types.ObjectId, ref: 'Answer' },
 createdAt: { type: Date, default: Date.now },
 updatedAt: { type: Date, default: Date.now },
@@ -49,6 +51,8 @@ interface IAnswer extends Document {
 questionId: Types.ObjectId;
 userId: Types.ObjectId;
 content: string;
+images: string[];
+
 isAccepted: boolean;
 upvotes: Types.ObjectId[];
 downvotes: Types.ObjectId[];
@@ -61,6 +65,7 @@ questionId: { type: Schema.Types.ObjectId, ref: 'Question', required: true },
 userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 content: { type: String, required: true },
 isAccepted: { type: Boolean, default: false },
+images:[{type:String}],
 upvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 downvotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
 createdAt: { type: Date, default: Date.now },
