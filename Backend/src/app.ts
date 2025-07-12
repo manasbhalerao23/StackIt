@@ -2,7 +2,10 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes';
+
+import qaRoutes from './routes/qa.routes';
 import cors from "cors";
+
 
 dotenv.config();
 const app = express();
@@ -15,5 +18,6 @@ app.use(cors({
 }));
 
 app.use('/api/auth', authRoutes);
+app.use("/api/qa",qaRoutes)
 
 export default app;

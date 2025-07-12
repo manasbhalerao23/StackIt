@@ -1,23 +1,30 @@
 import app from './app';
-import dotenv from "dotenv"
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-dotenv.config()
+
+dotenv.config();
+
 const PORT = process.env.PORT || 3000;
+const MONGO_URL = process.env.MONGO_URL || 'your-default-mongo-url';
+
+let isConnected = false; // Prevent multiple Mongoose connections
+
 async function main() {
-    
-    await mongoose.connect("mongodb+srv://dbUser:Password123@cluster0.lyzd4gp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0");
-    app.listen(3000);
+if (isConnected) {
+console.log('MongoDB is already connected.');
+return;
 }
 
-main()
-.then(()=>{
-    console.log("Database Connected");
-    app.listen(PORT,()=>{
-        console.log("Server Running on "+ PORT);
-        
-    })
-    
-})
-.catch((err) => {
-    console.error("can't connect to Database", err);
-  });
+try {
+await mongoose.connect(MONGO_URL);
+isConnected = true;
+console.log('✅ Database Connected');
+app.listen(PORT, () => {
+  console.log(`🚀 Server Running on http://localhost:${PORT}`);
+});
+} catch (err) {
+console.error("❌ Can't connect to Database", err);
+}
+}
+
+main();
