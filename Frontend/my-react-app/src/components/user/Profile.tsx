@@ -1,5 +1,6 @@
-import { useAuth } from "../../Hooks/useAuth";
+import { useSelector } from "react-redux";
 import { QuestionCard } from "../question/QuestionCard";
+import type { RootState } from "../../store";
 
 const mockQuestions = [
   {
@@ -25,7 +26,7 @@ const mockAnswers = [
 ];
 
 export const ProfilePage = () => {
-  const { user } = useAuth();
+  const user = useSelector((state: RootState) => state.auth.user);
 
   if (!user) {
     return (

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Tag } from "../Shared/Tag";
 import { Badge } from "../Shared/Badge";
@@ -12,6 +13,7 @@ interface QuestionCardProps {
   answers: number;
   askedBy: string;
   time: string;
+  images: string[];
 }
 
 export const QuestionCard = ({
@@ -23,19 +25,47 @@ export const QuestionCard = ({
   answers,
   askedBy,
   time,
+  images = []
 }: QuestionCardProps) => {
+  const [voteCount, setVoteCount] = useState(votes);
+
+  const handleUpvote = () => {
+    setVoteCount((prev) => prev + 1);
+    // await axios.post(`/api/vote/upvote`, { questionId: id })
+  };
+
+  const handleDownvote = () => {
+    setVoteCount((prev) => prev - 1);
+    // await axios.post(`/api/vote/downvote`, { questionId: id })
+  };
+
   return (
     <div className="flex border-b py-4 gap-4">
       <VotePanel
-        votes={votes}
-        onUpvote={() => {}}
-        onDownvote={() => {}}
+        votes={voteCount}
+        onUpvote={handleUpvote}
+        onDownvote={handleDownvote}
       />
       <div className="flex-1">
         <Link to={`/question/${id}`} className="text-lg font-semibold text-blue-700 hover:underline">
           {title}
         </Link>
         <p className="text-sm text-gray-600 mt-1">{description.slice(0, 120)}...</p>
+
+         {/* Image preview */}
+        {images.length > 0 && (
+          <div className="flex gap-2 mt-2">
+            {images.map((url, index) => (
+              <img
+                key={index}
+                src={url}
+                alt={`question-${id}-img-${index}`}
+                className="w-24 h-16 object-cover rounded"
+              />
+            ))}
+          </div>
+        )}
+
         <div className="flex gap-2 flex-wrap mt-2">
           {tags.map((tag) => (
             <Tag key={tag} label={tag} />

@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Input } from "../Shared/Input";
 import { Button } from "../Shared/Button";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../Hooks/useAuth";
+import { useDispatch } from "react-redux";
 import axios from "axios";
+import { login as loginAction } from "../../features/auth/authSlice";
 
 export const LoginPage = () => {
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,15 +17,17 @@ export const LoginPage = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      //chaeck api
-      const response = await axios.post("http://localhost:3000/api/auth/login", {
-        email,
-        password,
-      });
-      const {token, user} = response.data;
-      login(token, user);
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        { email, password },
+        { withCredentials: true }
+      );
+
+      // Dispatch Redux action
+      dispatch(loginAction(response.data.user));
+      localStorage.setItem("stackit_user", JSON.stringify(response.data.user));
+
       navigate("/");
-     
     } catch (err) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || "Invalid credentials");
