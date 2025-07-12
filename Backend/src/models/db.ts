@@ -52,10 +52,9 @@ questionId: Types.ObjectId;
 userId: Types.ObjectId;
 content: string;
 images: string[];
-
 isAccepted: boolean;
-upvotes: Types.ObjectId[];
-downvotes: Types.ObjectId[];
+upvotes: Types.Array<Types.ObjectId>; 
+downvotes: Types.Array<Types.ObjectId>;
 createdAt: Date;
 updatedAt: Date;
 }

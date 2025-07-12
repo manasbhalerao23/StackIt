@@ -27,18 +27,16 @@ try{
     if(!localFilePath)return;
 
 
-    //upload on cloudinary
    const response=  await cloudinary.uploader.upload(localFilePath,{
         resource_type:"auto"
     })
-//file has been uploaded successful
 console.log("file is uploaded on cloudinary "+response.url);
 return response
 
 
 
 }catch(err){
-fs.unlinkSync(localFilePath)// remove the locally saved temporary file
+fs.unlinkSync(localFilePath)
 return null;
 }
 
@@ -47,13 +45,11 @@ return null;
 
 export const deleteImage = async (imageUrl:string) => {
   try {
-    // Extract the public ID from the URL
     
-    const publicId = imageUrl?.split('/')?.pop()?.split('.')[0]; // This extracts the public ID
+    const publicId = imageUrl?.split('/')?.pop()?.split('.')[0]; 
     if(!publicId){
       throw new Error("Invalid Image URL");
     }
-    // Delete the image from Cloudinary
      await cloudinary.uploader.destroy(publicId);
   } catch (error) {
     console.error('Error deleting image:', error);

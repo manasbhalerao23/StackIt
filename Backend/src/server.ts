@@ -7,7 +7,7 @@ dotenv.config();
 const PORT = process.env.PORT || 3000;
 const MONGO_URL = process.env.MONGO_URL || 'your-default-mongo-url';
 
-let isConnected = false; // Prevent multiple Mongoose connections
+let isConnected = false; 
 
 async function main() {
 if (isConnected) {
