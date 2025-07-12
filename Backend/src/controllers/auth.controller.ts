@@ -3,6 +3,18 @@ import bcrypt from 'bcrypt';
 import { User } from '../models/db';
 import { generateToken } from '../utils/generateTokens';
 
+const sendToken = (res: Response, userId: string, message: string) => {
+  const token = generateToken(userId);
+  res
+    .cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // Only HTTPS in production
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    })
+    .status(200)
+    .json({ message });
+};
 
 export const register = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
@@ -45,14 +57,24 @@ export const login = async (req: Request, res: Response) => {
     if (!isMatch)
       return res.status(401).json({ message: 'Invalid credentials' });
 
-    const token = generateToken(user._id.toString());
-
-    res.json({
-      message: 'Login successful',
-      user: { id: user._id, username: user.username, email: user.email, role: user.role },
-      token,
-    });
+    sendToken(res, user._id.toString(), 'Login successful');
   } catch (err) {
     res.status(500).json({ message: 'Login failed', error: err });
   }
 };
+
+
+export const logout = (req: Request, res: Response) => {
+  
+    res
+    .clearCookie('token', {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production',
+    })
+    .status(200)
+    .json({ message: 'Logged out successfully' });
+};
+
+
+
