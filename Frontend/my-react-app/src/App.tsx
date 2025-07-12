@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
-function App() {
-  const [count, setCount] = useState(0)
+import { Navbar } from "./components/Navbar/Navbar";
+import { HomePage } from "./pages/Homepage";
+import { AskPage } from "./pages/AskQuestion";
+import { QuestionPage } from "./pages/QuestionPage";
+import { LoginPage } from "./components/Auth/Login";
+import { SignupPage } from "./components/Auth/Signup";
+import { ProfilePage } from "./components/user/Profile";
+import { AdminPage } from "./components/admin/AdminPage";
 
+import { useAuth } from "./Hooks/useAuth";
+import type { JSX } from "react";
+import { NotFoundPage } from "./pages/NotFound";
+
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { user } = useAuth();
+  return user ? children : <Navigate to="/login" />;
+};
+
+const AdminRoute = ({ children }: { children: JSX.Element }) => {
+  const { user } = useAuth();
+  return user?.role === "admin" ? children : <Navigate to="/" />;
+};
+
+function App () {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <Navbar />
+      <div className="mt-6">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/ask" element={<ProtectedRoute><AskPage /></ProtectedRoute>} />
+          <Route path="/question/:id" element={<QuestionPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
+          <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </Router>
+  );
+};
 
-export default App
+export default App;
