@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Input } from "../Shared/Input";
 import { Button } from "../Shared/Button";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../Hooks/useAuth";
+import axios from "axios";
 
 export const SignupPage = () => {
   const { login } = useAuth();
@@ -16,13 +17,24 @@ export const SignupPage = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Simulate successful signup
-      const token = "dummy-token";
-      const user = { id: "2", name, email };
+      console.log(name);
+      const response = await axios.post("http://localhost:3000/api/auth/register", {
+        username: name,
+        email,
+        password,
+      });
+      console.log("registered");
+      console.log(response);
+      const {token, user} = response.data;
+      console.log("done");
       login(token, user);
       navigate("/");
     } catch (err) {
-      setError("Signup failed. Try again.");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Signup failed. Try again.");
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     }
   };
 
