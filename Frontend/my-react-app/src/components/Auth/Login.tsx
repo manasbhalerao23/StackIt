@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Input } from "../Shared/Input";
 import { Button } from "../Shared/Button";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../Hooks/useAuth";
+import axios from "axios";
 
 export const LoginPage = () => {
   const { login } = useAuth();
@@ -15,14 +16,21 @@ export const LoginPage = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Simulate API login
-      const token = "dummy-token";
-      const user = { id: "1", name: "John Doe", email };
+      //chaeck api
+      const response = await axios.post("http://localhost:3000/api/auth/login", {
+        email,
+        password,
+      });
+      const {token, user} = response.data;
       login(token, user);
       navigate("/");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     } catch (err) {
-      setError("Invalid credentials");
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Invalid credentials");
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
