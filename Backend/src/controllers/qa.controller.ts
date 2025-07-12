@@ -185,3 +185,42 @@ console.error('Downvote error:', error);
 return res.status(500).json({ message: 'Internal server error.' });
 }
 };
+
+
+export const selectAnswer= async (req:Request, res:Response)=>{
+    try{
+        
+        const userId=req.user
+        const {answerId} = req.body;
+        const answer = await Answer.findById(answerId);
+        
+        if(!answerId || !answer){
+            return res.status(400).json({message:'Invalid or missing answer ID.'})
+        }
+        const questionId=answer.questionId
+        if (!questionId) {
+            return res.status(404).json({ message: 'Question not found.' });
+        }
+        const question= await Question.findById(questionId);
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found.' });
+            }
+
+        if(question.userId!=userId){
+            return res.status(403).json({message:'Your are not authorized to select the answer'})
+        }
+        if (question.acceptedAnswerId) {
+  return res.status(409).json({ message: 'An answer has already been accepted for this question.' });
+}
+        question.acceptedAnswerId=answerId
+        await question.save();
+        answer.isAccepted=true
+
+        await answer.save();
+        return res.status(200).json({message:'Answer selected.'})
+        }catch(error){
+            console.error('Select answer error:', error);
+            return res.status(500).json({ message: 'Internal server error.' });
+            }
+
+}

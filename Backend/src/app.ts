@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes';
 
 import qaRoutes from './routes/qa.routes';
 import cors from "cors";
+import viewRoutes from './routes/view.routes';
 
 
 dotenv.config();
@@ -19,5 +20,6 @@ app.use(cors({
 
 app.use('/api/auth', authRoutes);
 app.use("/api/qa",qaRoutes)
+app.use("/api/view",viewRoutes)
 
 export default app;
