@@ -8,7 +8,6 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/logout',logout);
 
-// 🔐 Example protected route
 router.get('/me', protect, (req, res) => {
   res.send(`Hello, user with ID ${req.user}`);
 });
