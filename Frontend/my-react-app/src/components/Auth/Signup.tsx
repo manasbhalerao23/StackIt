@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Input } from "../Shared/Input";
 import { Button } from "../Shared/Button";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../Hooks/useAuth";
+import { useDispatch } from "react-redux";
+import { login as loginAction } from "../../features/auth/authSlice";
 import axios from "axios";
 
 export const SignupPage = () => {
-  const { login } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -17,17 +18,15 @@ export const SignupPage = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log(name);
-      const response = await axios.post("http://localhost:3000/api/auth/register", {
-        username: name,
-        email,
-        password,
-      });
-      console.log("registered");
-      console.log(response);
-      const {token, user} = response.data;
-      console.log("done");
-      login(token, user);
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/register",
+        { username: name, email, password },
+        { withCredentials: true }
+      );
+
+      dispatch(loginAction(response.data.user));
+      localStorage.setItem("stackit_user", JSON.stringify(response.data.user));
+
       navigate("/");
     } catch (err) {
       if (axios.isAxiosError(err)) {

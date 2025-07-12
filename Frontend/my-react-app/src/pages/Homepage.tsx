@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { QuestionCard } from "../components/question/QuestionCard";
 
 const dummyQuestions = [
@@ -8,8 +9,9 @@ const dummyQuestions = [
     tags: ["react", "hooks"],
     votes: 12,
     answers: 3,
-    askedBy: "Jane Doe",
+    askedBy: "Rahul",
     time: "2 hours ago",
+    images: ["https://reactjs.org/logo-og.png"],
   },
   {
     id: "2",
@@ -18,8 +20,9 @@ const dummyQuestions = [
     tags: ["mongodb", "database"],
     votes: 5,
     answers: 1,
-    askedBy: "Tom",
+    askedBy: "Elon",
     time: "4 hours ago",
+    images: ["https://webassets.mongodb.com/_com_assets/cms/mongodb_logo1-76twgcu2dm.png"],
   },
   {
     id: "3",
@@ -30,17 +33,64 @@ const dummyQuestions = [
     answers: 0,
     askedBy: "Sara",
     time: "6 hours ago",
+    images: ["https://assets.vercel.com/image/upload/v1607554385/repositories/next-js/next-js.png"],
+  },
+  {
+    id: "4",
+    title: "What is Redux Toolkit?",
+    description: "Is Redux Toolkit a replacement for traditional Redux setup?",
+    tags: ["redux", "state-management"],
+    votes: 8,
+    answers: 2,
+    askedBy: "Anjali",
+    time: "1 day ago",
+    images: ["https://redux.js.org/img/redux-logo-landscape.png"],
   },
 ];
 
+
 export const HomePage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 2;
+
+  const totalPages = Math.ceil(dummyQuestions.length / pageSize);
+  const paginatedQuestions = dummyQuestions.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  const handlePrev = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const handleNext = () => setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6 text-blue-700">Top Questions</h1>
+
       <div className="space-y-6">
-        {dummyQuestions.map((q) => (
+        {paginatedQuestions.map((q) => (
           <QuestionCard key={q.id} {...q} />
         ))}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-4 mt-6">
+        <button
+          onClick={handlePrev}
+          disabled={currentPage === 1}
+          className="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <span className="px-4 py-2 text-gray-700">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={handleNext}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 border rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
   );
